@@ -11,6 +11,10 @@ bot.on('ready', () => {
     console.log('haha ezpz')
 })
 
+bot.on('guildMemberAdd', member => {
+
+})
+
 bot.on('message', (msg) => {
     const { name } = msg.channel.guild
     if (!msg.author.bot) {
@@ -41,7 +45,10 @@ bot.on('message', (msg) => {
             .catch(err => {
                 console.log(err)
             })
-            }
+        }
+        if (msg.content === '!duck') {
+            msg.channel.send('https://images-na.ssl-images-amazon.com/images/I/8166xCVDGnL._SY355_.jpg')
+        }
     } 
 })
 
