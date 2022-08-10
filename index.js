@@ -32,5 +32,10 @@ bot.on('messageCreate', (msg) => {
     }
 })
 
+bot.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+    await paths.handleMessage(interaction);
+})
+
 
 bot.login(process.env.BOT_TOKEN);

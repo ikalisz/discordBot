@@ -6,7 +6,7 @@ const map = require('lodash/map');
 const concat = require('lodash/concat');
 const cloneDeep = require('lodash/cloneDeep');
 const { getAllChamps, getChampSquareAssetLink } = require('./api');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder } = require('discord.js');
 
 let champCache = {};
 let organizedChamps = {};
@@ -74,7 +74,8 @@ const getChamps = async (organize = false) => {
     } else {
         return !isEmpty(champCache) ? champCache : organizeChamps(await getAllChamps(), organize);
     };
-}
+};
+
 
 module.exports = {
     getChamps,

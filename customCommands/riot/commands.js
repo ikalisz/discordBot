@@ -16,7 +16,7 @@ const helpers = require('./helpers');
 let teamChamps = [];
 
 const teamCompOptions = ['Tank', 'Fighter', 'Marksman', 'Support', 'Mage', 'Assassin', 'Random'];
-const overlapOptions = ['yes', 'no']
+const overlapOptions = [true, false]
 
 const pickChamp =  async (champions, teamSize, teamComp = ['Random'], overlap = false, whichTeam = 1, teamChamps) => {
     // TODO: Make it so we support Tank/Fighter This would be done by checking the length of teamComp.split('/')
@@ -44,8 +44,14 @@ const checkChampOverlap = (champ, teamChamps) => {
     return !isUndefined(find(teamChamps, ['id', get(champ, 'id')]));
 }
 
+// This function will handle rerolls when a user wants to reroll a champion on their team.
+const handleReroll = () => {
+    
+}
+
 module.exports = {
-    customRandomizer: async (msg, content) => {
+    customRandomizer: async (interaction, content) => {
+        await interaction.deferReply();
         // Should take in 3 params (Team size, team comp (optional), overlap (optional))
         // Params will come in the message as ~custom 4 - TANK, SUPPORT, MARKSMAN - yes
         if (!isEmpty(teamChamps)) teamChamps = [];
