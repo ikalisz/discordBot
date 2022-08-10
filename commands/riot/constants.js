@@ -1,3 +1,3 @@
 module.exports = {
-    dataDragonEndpoint: 'https://ddragon.leagueoflegends.com/'
+    dataDragonEndpoint: 'http://ddragon.leagueoflegends.com'
 }

@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const bot = new Discord.Client()
 const express = require('express')
 const app = express()
-const auth = require('./auth.json')
 const paths = require('./paths');
+const moment = require('moment');
 require('dotenv').config();
 
 const authPrefix = process.env.AUTH_PREFIX;
@@ -21,7 +21,7 @@ bot.on('guildMemberAdd', member => {
 
 })
 
-bot.on('messageCreate', (msg) => {
+bot.on('message', (msg) => {
     const { name } = msg.channel.guild;
     if (!msg.author.bot) {
         paths.handleMessage(msg);
@@ -32,5 +32,4 @@ bot.on('messageCreate', (msg) => {
 })
 
 
-console.log(bot)
-bot.login(process.env.BOT_TOKEN)
+bot.login(process.env.BOT_TOKEN);

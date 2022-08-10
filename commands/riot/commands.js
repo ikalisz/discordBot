@@ -5,6 +5,8 @@ const isNull = require('lodash/isNull');
 const includes = require('lodash/includes');
 const find = require('lodash/find');
 const get = require('lodash/get');
+const trim = require('lodash/trim');
+const map = require('lodash/map');
 const helpers = require('./helpers');
 
 
@@ -16,8 +18,10 @@ const overlapOptions = ['yes', 'no']
 
 const pickChamp =  async (champions, index, teamComp = 'Random', overlap = false, whichTeam = 1) => {
     // TODO: Make it so we support Tank/Fighter This would be done by checking the length of teamComp.split('/')
+    console.log('champions', teamComp, champions);
     let pickedChampion = {};
     const selectedChampions = teamComp !== 'Random' ? get(champions, [teamComp.toLowerCase()]) : await helpers.getChamps(false);
+    console.log('selectedChampions', selectedChampions);
     const champIndex = Math.floor(Math.random() * selectedChampions.length);
     pickedChampion = selectedChampions[champIndex];
 
@@ -33,20 +37,25 @@ const checkChampOverlap = (champ) => {
 }
 
 module.exports = {
-    customRandomizer: (msg, content) => {
+    customRandomizer: async (msg, content) => {
         // Should take in 3 params (Team size, team comp (optional), overlap (optional))
         // Params will come in the message as ~custom 4 - TANK, SUPPORT, MARKSMAN - yes
+        console.log('content', content)
         const params = content.split('-');
+        console.log('params', params);
         const teamSize = parseInt(nth(params));
         if (isNull(teamSize)) msg.reply('You need to include the size of teams!');
-        const overlap = nth(params, -1);
-        const teamComp = includes(overlapOptions, overlap.toLowerCase()) ? slice(params, 1, -1) : slice(params, 1);
+        const overlap = trim(nth(params, -1));
+        let teamComp = map((includes(overlapOptions, overlap.toLowerCase()) ? nth(slice(params, 1, -1)).split(',') : nth(slice(params, 1)).split(',')), (item) => trim(item));
+        console.log('teamComp before', teamComp, includes(overlapOptions, overlap.toLowerCase()), overlap.toLowerCase());
         
         if (!isEmpty(find(teamComp, (selection) => !includes(teamCompOptions, selection)))) {
+            console.log('overlap', overlap);
+            console.log('teamComp', teamComp);
             return msg.reply(`You included an invalid option for team comp! The available options are: ${teamCompOptions.join(', ')}`)
         };
         for (let i = 0; i < teamSize; i++) {
-            pickChamp(champions, i, get(teamComp, i), overlap, 1);
+            await pickChamp(await helpers.getChamps(true) , i, get(teamComp, i), overlap, 1);
         }
     },
     summonerLookup: (msg) => {
