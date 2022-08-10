@@ -1,4 +1,5 @@
 const axios = require('axios');
+const isEmpty = require('lodash/isEmpty');
 const get = require('lodash/get');
 const {
     dataDragonEndpoint,
@@ -6,9 +7,21 @@ const {
 require('dotenv').config();
 const RIOT_TOKEN = process.env.RIOT_TOKEN;
 
+let cachedVersion = '';
+
 const getDataDragonVersion = async () => {
     return get(await axios.get(`${dataDragonEndpoint}/api/versions.json`, config), 'data.0');
 };
+
+const getChampSquareAssetLink = async (champ) => {
+    if (isEmpty(cachedVersion)) {
+        const newVer = await getDataDragonVersion();
+        cachedVersion = newVer;
+        return `${dataDragonEndpoint}/cdn/${newVer}/img/champion/${get(champ, 'id')}.png`;
+    } else {
+        return `${dataDragonEndpoint}/cdn/${cachedVersion}/img/champion/${get(champ, 'id')}.png`;
+    }
+}
 
 const config = {
     headers: {
@@ -17,13 +30,15 @@ const config = {
 }
 
 module.exports = {
-    getAllChamps: async (version) => {
+    getAllChamps: async (version = cachedVersion) => {
         console.log('getting!');
-        if (!version) {
+        if (isEmpty(version)) {
             const newVer = await getDataDragonVersion();
+            cachedVersion = newVer
             return get(await axios.get(`${dataDragonEndpoint}/cdn/${newVer}/data/en_US/champion.json`, config), 'data.data', []);
         } else {
             return get(await axios.get(`${dataDragonEndpoint}/cdn/${version}/data/en_US/champion.json`, config), 'data.data', []);
         }
     },
+    getChampSquareAssetLink,
 }

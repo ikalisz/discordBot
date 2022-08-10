@@ -4,10 +4,15 @@ const set = require('lodash/set');
 const isEmpty = require('lodash/isEmpty');
 const map = require('lodash/map');
 const concat = require('lodash/concat');
-const { getAllChamps } = require('./api')
+const { getAllChamps } = require('./api');
+const { EmbedBuilder } = require('discord.js');
 
-const champCache = {};
-const organizedChamps = {};
+let champCache = {};
+let organizedChamps = {};
+
+const buildEmbedChamp = (champion) => {
+    return new EmbedBuilder()
+}
 
 const mapChamps = (champions) => {
     return map(champions, (champ) => {
@@ -21,8 +26,9 @@ const mapChamps = (champions) => {
     });
 };
 
-const organizeChamps = (champions) => {
+const organizeChamps = (champions, organize) => {
     const mappedChamps = mapChamps(champions);
+    champCache = mappedChamps;
     forEach(champions, (champ) => {
         const tags = get(champ, 'tags', []);
         const champMapped = {
@@ -36,14 +42,14 @@ const organizeChamps = (champions) => {
             set(organizedChamps, tag.toLowerCase(), concat(get(organizedChamps, [tag.toLowerCase()], []), champMapped))
         });
     });
-    return champCache;
+    return organize ? organizedChamps : champCache;
 };
 
 const getChamps = async (organize = false) => {
     if (organize) {
-        return !isEmpty(organizedChamps) ? organizedChamps : organizeChamps(await getAllChamps());
+        return !isEmpty(organizedChamps) ? organizedChamps : organizeChamps(await getAllChamps(), organize);
     } else {
-        return !isEmpty(champCache) ? champCache : organizeChamps(await getAllChamps());
+        return !isEmpty(champCache) ? champCache : organizeChamps(await getAllChamps(), organize);
     };
 }
 
