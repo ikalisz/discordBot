@@ -10,7 +10,6 @@ module.exports = {
         let path = msg.content.slice(1)
         path = path.split(' ');
         path = nth(path);
-        console.log('path', path);
         const content = msg.content.slice(path.length + 1);
         switch (path) {
             case 'custom': 

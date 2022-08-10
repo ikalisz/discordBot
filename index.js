@@ -1,5 +1,5 @@
-const Discord = require('discord.js')
-const bot = new Discord.Client()
+const { Client, GatewayIntentBits } = require('discord.js');
+const bot = new Client({ intents: [GatewayIntentBits.Guilds] });
 const express = require('express')
 const app = express()
 const paths = require('./paths');
@@ -12,16 +12,17 @@ const lastCmdRunTime = moment();
 
 app.use(express.json())
 
-bot.on('ready', () => {
+bot.once('ready', () => {
     console.info('Working now!');
     bot.user.setStatus('Ready to work!');
 })
 
-bot.on('guildMemberAdd', member => {
+bot.once('guildMemberAdd', member => {
 
 })
 
-bot.on('message', (msg) => {
+bot.on('messageCreate', (msg) => {
+    console.log('here!');
     const { name } = msg.channel.guild;
     if (!msg.author.bot) {
         paths.handleMessage(msg);
